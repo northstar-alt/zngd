@@ -1,14 +1,14 @@
 import os
 import json
-import psycopg2
-from psycopg2.extras import RealDictCursor
+import psycopg
+from psycopg.rows import dict_row
 from dotenv import load_dotenv
 
 load_dotenv()
 
 def get_connection():
     """Open a new connection to the prototype database"""
-    return psycopg2.connect(
+    return psycopg.connect(
         host=os.getenv("PG_HOST", "localhost"),
         port=os.getenv("PG_PORT", "5432"),
         dbname=os.getenv("PG_DBNAME", "prototype"),
@@ -37,7 +37,7 @@ def fetch_organism_targets(conn):
         WHERE o.pathogen_id IS NOT NULL
         ORDER BY o.organism_id;
     """
-    with conn.cursor(cursor_factory=RealDictCursor) as cur:
+    with conn.cursor(row_factory=dict_row) as cur:
         cur.execute(query)
         return cur.fetchall()
         

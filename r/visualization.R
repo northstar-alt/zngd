@@ -80,3 +80,36 @@ ggplot(seq_by_pathogen, aes(x = pathogen_name, y = gc_content, fill = scale)) +
     fill = "Sequence Type"
   ) +
   theme_minimal()
+
+seq_by_pathogen %>%
+  group_by(pathogen_name, scale) %>%
+  summarise(
+    min_gc = min(gc_content, na.rm = TRUE),
+    median_gc = median(gc_content, na.rm = TRUE),
+    max_gc = max(gc_content, na.rm = TRUE),
+    n = n(),
+    .groups = "drop"
+  )
+
+ggplot(seq_by_pathogen, aes(x = pathogen_name, y = sequence_length, fill = pathogen_name)) +
+  geom_boxplot() +
+  scale_y_log10() +
+  labs(
+    title = "Sequence Length by Pathogen (log scale)",
+    x = "Pathogen Name",
+    y = "Sequence Length (bp, log scale)"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+ggplot(seq_by_pathogen, aes(x = sequence_length, y = gc_content, color = pathogen_name, shape = scale)) +
+  geom_point(size = 3, alpha = 0.7) +
+  scale_x_log10() +
+  labs(
+    title = "GC Content vs Sequence Length",
+    x = "Sequence Length",
+    y = "GC Content (%)",
+    color = "Pathogen",
+    shape = "Sequence Type"
+  ) +
+  theme_minimal()
