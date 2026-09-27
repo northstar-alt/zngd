@@ -2,6 +2,9 @@ library(DBI)
 library(RPostgres)
 library(dplyr)
 library(jsonlite)
+library(ggplot2)
+
+setwd("C:/Users/Shania Makuvire/OneDrive/desktop/zngd_prototype")
 
 con <- dbConnect(
   RPostgres::Postgres(),
@@ -107,9 +110,51 @@ ggplot(seq_by_pathogen, aes(x = sequence_length, y = gc_content, color = pathoge
   scale_x_log10() +
   labs(
     title = "GC Content vs Sequence Length",
-    x = "Sequence Length",
+    x = "Sequence Length (bp, log scale)",
     y = "GC Content (%)",
     color = "Pathogen",
     shape = "Sequence Type"
   ) +
   theme_minimal()
+
+# Chart 1: Sequences per pathogen
+plot1 <- ggplot(pathogen_counts, aes(x = pathogen_name, y = sequence_count)) +
+  geom_col(fill = "pink") +
+  labs(
+    title = "Seuquence Ingested per Pathogen",
+    x = "Pathogen",
+    y = "Number of Sequences"
+  ) +
+  theme_minimal()
+
+ggsave("sequences_per_pathogen.png", plot = plot1, width = 8, height = 6, dpi = 600)
+
+# Chart 2: GC Content by pathogen and scale
+plot2 <- ggplot(seq_by_pathogen, aes(x = pathogen_name, y = gc_content, fill = scale)) +
+  geom_boxplot() +
+  labs(
+    title = " GC Content by Pathogen and Sequence Scale",
+    x = "Pathogen",
+    y = "GC Content (%)",
+    fill = "Sequence Type"
+  ) +
+  theme_minimal()
+
+ggsave("gc_content_by_pathogen.png", plot = plot2, width = 8, height = 6, dpi = 600)
+
+# Chart 3: GC Content versus sequence length
+plot3 <- ggplot(seq_by_pathogen, aes(x = sequence_length, y = gc_content, color = pathogen_name, shape = scale)) +
+  geom_point(size = 3, alpha = 0.7) +
+  scale_x_log10() +
+  labs(
+    title = "GC Content vs Sequence Length",
+    x = "Sequence Length (bp, log scale)",
+    y = "GC Content (%)",
+    color = "Pathogen",
+    shape = "Sequence Type"
+  ) +
+  theme_minimal()
+
+ggsave("gc_vs_length.png", plot = plot3, width = 8, height = 6, dpi = 600)
+
+
