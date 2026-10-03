@@ -19,7 +19,7 @@ def get_connection():
 def get_all_species(conn):
     """Return every row in the species table."""
     with conn.cursor() as cur:
-        cur.execute("SELECT * FROM species ORDER_BY species_id;")
+        cur.execute("SELECT * FROM species ORDER BY species_id;")
         return cur.fetchall()
 
 def get_species_by_id(conn, species_id):
