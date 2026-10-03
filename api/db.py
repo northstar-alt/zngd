@@ -34,7 +34,7 @@ def get_species_by_id(conn, species_id):
 def get_all_pathogens(conn):
     """Return every row in the pathogens table."""
     with conn.cursor() as cur:
-        cur.execute("SELECT * FROM pathogen ORDER_BY pathogen_id;")
+        cur.execute("SELECT * FROM pathogen ORDER BY pathogen_id;")
         return cur.fetchall()
 
 def get_pathogen_by_id(conn, pathogen_id):
@@ -52,15 +52,15 @@ def get_all_organisms(conn):
         SELECT 
             o.organism_id,
             s.scientific_name AS species_name,
-            p.pathogen_name AS pathogen_name,
+            p.scientific_name AS pathogen_name,
             o.collection_date,
-            o.specimen.type,
+            o.specimen_type,
             o.host_status,
             o.notes
         FROM organism o
         JOIN species s ON o.species_id = s.species_id
         LEFT JOIN pathogen p ON o.pathogen_id = p.pathogen_id
-        ORDERY_BY o.organism_id;
+        ORDER BY o.organism_id;
     """
     with conn.cursor() as cur:
         cur.execute(query)
@@ -72,9 +72,9 @@ def get_organism_by_id(conn, organism_id):
         SELECT 
             o.organism_id,
             s.scientific_name AS species_name,
-            p.pathogen_name AS pathogen_name,
+            p.scientific_name AS pathogen_name,
             o.collection_date,
-            o.specimen.type,
+            o.specimen_type,
             o.host_status,
             o.notes
         FROM organism o
@@ -98,7 +98,7 @@ def get_all_sequences(conn):
             gc_content,
             retrieved_at
         FROM sequence
-        ORDER_BY sequence_id;
+        ORDER BY sequence_id;
     """
     with conn.cursor() as cur:
         cur.execute(query)
