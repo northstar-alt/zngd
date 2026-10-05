@@ -61,11 +61,11 @@ def get_pathogen(pathogen_id: int):
 
 
 @app.get("/organisms")
-def list_organisms():
-    """Return every organism, with readable species and pathogen information."""
+def list_organisms(host_status: str = None, species_name: str = None, pathogen_name: str = None):
+    """Return every organism, with readable species and pathogen information. Optionally filter by host_status, species_name, and/or pathogen_name."""
     conn = db.get_connection()
     try:
-        return db.get_all_organisms(conn)
+        return db.get_all_organisms(conn, host_status, species_name, pathogen_name)
     finally:
         conn.close()
 

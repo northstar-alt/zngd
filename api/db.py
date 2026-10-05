@@ -46,46 +46,6 @@ def get_pathogen_by_id(conn, pathogen_id):
               )
         return cur.fetchone()
 
-def get_all_organisms(conn):
-    """Return every organism, joined with its species and pathogen information."""
-    query = """
-        SELECT 
-            o.organism_id,
-            s.scientific_name AS species_name,
-            p.scientific_name AS pathogen_name,
-            o.collection_date,
-            o.specimen_type,
-            o.host_status,
-            o.notes
-        FROM organism o
-        JOIN species s ON o.species_id = s.species_id
-        LEFT JOIN pathogen p ON o.pathogen_id = p.pathogen_id
-        ORDER BY o.organism_id;
-    """
-    with conn.cursor() as cur:
-        cur.execute(query)
-        return cur.fetchall()
-
-def get_organism_by_id(conn, organism_id):
-    """Return a single organism ID, joined with its species and pathogen information"""
-    query = """
-        SELECT 
-            o.organism_id,
-            s.scientific_name AS species_name,
-            p.scientific_name AS pathogen_name,
-            o.collection_date,
-            o.specimen_type,
-            o.host_status,
-            o.notes
-        FROM organism o
-        JOIN species s ON o.species_id = s.species_id
-        LEFT JOIN pathogen p ON o.pathogen_id = p.pathogen_id
-        WHERE o.organism_id = %s;
-    """
-    with conn.cursor() as cur:
-        cur.execute(query, (organism_id,))
-        return cur.fetchone()
-
 def get_all_organisms(conn, host_status=None, species_name=None, pathogen_name=None):
     """Return every organism, joined with its species and pathogen information. Optionally filter by host_status, species_name, and/or pathogen_name."""
     query = """
@@ -120,6 +80,44 @@ def get_all_organisms(conn, host_status=None, species_name=None, pathogen_name=N
 
     with conn.cursor() as cur:
         cur.execute(query, params)
+        return cur.fetchall()
+
+
+def get_organism_by_id(conn, organism_id):
+    """Return a single organism ID, joined with its species and pathogen information"""
+    query = """
+        SELECT 
+            o.organism_id,
+            s.scientific_name AS species_name,
+            p.scientific_name AS pathogen_name,
+            o.collection_date,
+            o.specimen_type,
+            o.host_status,
+            o.notes
+        FROM organism o
+        JOIN species s ON o.species_id = s.species_id
+        LEFT JOIN pathogen p ON o.pathogen_id = p.pathogen_id
+        WHERE o.organism_id = %s;
+    """
+    with conn.cursor() as cur:
+        cur.execute(query, (organism_id,))
+        return cur.fetchone()
+
+
+def get_all_sequences(conn):
+    """Return a light summary of every sequence, (with no raw sequence data)."""
+    query = """
+                SELECT 
+                    sequence_id,
+                    organism_id,
+                    sequence_type,
+                    length,
+                    description
+                FROM sequence
+                ORDER BY sequence_id;
+    """
+    with conn.cursor() as cur:
+        cur.execute(query)
         return cur.fetchall()
 
 def get_sequence_by_id(conn, sequence_id):
