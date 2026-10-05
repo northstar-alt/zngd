@@ -130,3 +130,58 @@ def get_sequence_by_id(conn, sequence_id):
     with conn.cursor() as cur:
         cur.execute(query, (sequence_id,))
         return cur.fetchone()
+
+
+def get_all_collection_sites(conn):
+    """Return every row in the collection_site table."""
+    query = """
+        SELECT 
+        site_id,
+        site_name,
+        province,
+        district,
+        latitude,
+        longitude,
+        site_type
+        FROM collection_site
+        ORDER BY site_id;
+    """
+    with conn.cursor() as cur:
+        cur.execute(query)
+        return cur.fetchall()
+
+
+def get_collection_site_by_id(conn, site_id):
+    """Return a single row from the collection_site table by site_id (one row or None if it doesn't exist)."""
+    query = """
+        SELECT *
+        FROM collection_site
+        WHERE site_id = %s;
+    """
+    with conn.cursor() as cur:
+        cur.execute(query, (site_id,))
+        return cur.fetchone()
+
+
+def get_all_qc_metrics(conn):
+    """Return every row in the qc table in the database."""
+    query = """
+        SELECT *
+        FROM qc
+        ORDER BY qc_id;
+    """
+    with conn.cursor() as cur:
+        cur.execute(query)
+        return cur.fetchall()
+
+
+def get_qc_metrics_by_id(conn, qc_id):
+    """Return a single row from the qc table by qc_id (one row or None if it doesn't exist)."""
+    query = """
+        SELECT *
+        FROM qc
+        WHERE qc_id = %s;
+    """
+    with conn.cursor() as cur:
+        cur.execute(query, (qc_id,))
+        return cur.fetchone()

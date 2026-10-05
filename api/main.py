@@ -104,3 +104,50 @@ def get_sequence(sequence_id: int):
         return sequence
     finally:
         conn.close()
+
+
+
+@app.get("/collection_site")
+def list_collection_sites():
+    """Return every collection site in the database."""
+    conn = db.get_connection()
+    try:
+        return db.get_all_collection_sites(conn)
+    finally:
+        conn.close()
+
+
+@app.get("/collection_site/{site_id}")
+def get_collection_site(site_id: int):
+    """Return one collection site by its site_id."""
+    conn = db.get_connection()
+    try:
+        site = db.get_collection_site_by_id(conn, site_id)
+        if site is None:
+            raise HTTPException(status_code=404, detail="Collection site not found")
+        return site
+    finally:
+        conn.close()
+
+
+@app.get("/qc")
+def list_qc_metrics():
+    """Return every row in the qc table in the database."""
+    conn = db.get_connection()
+    try:
+        return db.get_all_qc_metrics(conn)
+    finally:
+        conn.close()
+
+
+@app.get("/qc/{qc_id}")
+def get_qc_metric(qc_id: int):
+    """Return one row from the qc table by qc_id."""
+    conn = db.get_connection()
+    try:
+        qc_metric = db.get_qc_metrics_by_id(conn, qc_id)
+        if qc_metric is None:
+            raise HTTPException(status_code=404, detail="QC metric not found")
+        return qc_metric
+    finally:
+        conn.close()
