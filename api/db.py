@@ -86,22 +86,40 @@ def get_organism_by_id(conn, organism_id):
         cur.execute(query, (organism_id,))
         return cur.fetchone()
 
-def get_all_sequences(conn):
-    """Return a summary of every sequence, with no raw sequence data"""
+def get_all_organisms(conn, host_status=None, species_name=None, pathogen_name=None):
+    """Return every organism, joined with its species and pathogen information. Optionally filter by host_status, species_name, and/or pathogen_name."""
     query = """
         SELECT 
-            sequence_id,
-            organism_id,
-            ncbi_accession,
-            sequence_type,
-            sequence_length,
-            gc_content,
-            retrieved_at
-        FROM sequence
-        ORDER BY sequence_id;
+            o.organism_id,
+            s.scientific_name AS species_name,
+            p.scientific_name AS pathogen_name,
+            o.collection_date,
+            o.specimen_type,
+            o.host_status,
+            o.notes
+        FROM organism o
+        JOIN species s ON o.species_id = s.species_id
+        LEFT JOIN pathogen p ON o.pathogen_id = p.pathogen_id
+        WHERE 1=1
     """
+    params = []
+
+    if host_status:
+        query += " AND o.host_status = %s"
+        params.append(host_status)
+
+    if species_name:
+        query += " AND s.scientific_name = %s"
+        params.append(species_name)
+
+    if pathogen_name:
+        query += " AND p.scientific_name = %s"
+        params.append(pathogen_name)
+
+    query += " ORDER BY o.organism_id;"
+
     with conn.cursor() as cur:
-        cur.execute(query)
+        cur.execute(query, params)
         return cur.fetchall()
 
 def get_sequence_by_id(conn, sequence_id):
@@ -114,4 +132,3 @@ def get_sequence_by_id(conn, sequence_id):
     with conn.cursor() as cur:
         cur.execute(query, (sequence_id,))
         return cur.fetchone()
-    
