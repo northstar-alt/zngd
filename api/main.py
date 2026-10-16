@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException
+from flask import app
 import db
 
 app = FastAPI(
@@ -6,7 +7,6 @@ app = FastAPI(
     description = "Read-only API for the Zimbabwe genomic curation prototype.",
     version = "0.1.0",
 )
-
 
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -17,6 +17,7 @@ app.add_middleware(
     allow_methods=["GET"],
     allow_headers=["*"],
 )
+
 
 @app.get("/")
 def root():
