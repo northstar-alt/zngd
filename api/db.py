@@ -104,20 +104,23 @@ def get_organism_by_id(conn, organism_id):
         return cur.fetchone()
 
 
-def get_all_sequences(conn):
-    """Return a light summary of every sequence, (with no raw sequence data)."""
+def get_all_sequences(conn, limit=100, offset=0):
+    """Return a light summary of every sequence, one page at a time."""
     query = """
                 SELECT 
                     sequence_id,
                     organism_id,
+                    ncbi_accession,
                     sequence_type,
-                    length,
-                    description
+                    sequence_length,
+                    gc_content,
+                    retrieved_at
                 FROM sequence
-                ORDER BY sequence_id;
+                ORDER BY sequence_id
+                LIMIT %s OFFSET %s;
     """
     with conn.cursor() as cur:
-        cur.execute(query)
+        cur.execute(query, (limit, offset))
         return cur.fetchall()
 
 def get_sequence_by_id(conn, sequence_id):

@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Query
 from flask import app
 import db
 
@@ -95,11 +95,14 @@ def get_organism(organism_id: int):
 
 
 @app.get("/sequences")
-def list_sequences():
-    """Return a lightweight summary of every sequence (no raw sequence data)."""
+def list_sequences(
+    limit: int = Query(100, ge=1, le=500), 
+    offset: int = Query(0, ge=0)
+):
+    """Return a lightweight summary of every sequence Use ?limit= and ?offset= to page through results."""
     conn = db.get_connection()
     try:
-        return db.get_all_sequences(conn)
+        return db.get_all_sequences(conn, limit, offset)
     finally:
         conn.close()
 
